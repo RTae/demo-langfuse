@@ -2,9 +2,9 @@
 name = "chat-api"
 version = "0.1.0"
 description = ""
-authors = ["Natthanan Bhukan <natthanan.bhu@cjexpress.co.th>"]
+authors = ["RTae"]
 readme = "README.md"
-packages = [{include = "chat_api"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.11"
