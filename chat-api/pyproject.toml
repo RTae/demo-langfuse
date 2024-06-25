@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "chat-api"
+version = "0.1.0"
+description = ""
+authors = ["Natthanan Bhukan <natthanan.bhu@cjexpress.co.th>"]
+readme = "README.md"
+packages = [{include = "chat_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
