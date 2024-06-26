@@ -33,14 +33,12 @@ def chat(data: Chat):
         session_id=data.session_id,
         user_id=data.email
     )
-    answer, message_id = conversation(data.message, [langfuse_handler])
+    answer = conversation(data.message, [langfuse_handler])
     langfuse_handler.flush()
 
     return {
         "success": True,
         "data": {
             "answer": answer,
-            "message_id": f"{data.session_id}_{message_id}",
-            "session_id": data.session_id,
         },
     }

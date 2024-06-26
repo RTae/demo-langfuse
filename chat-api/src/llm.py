@@ -7,11 +7,11 @@ from langchain.prompts import (
     HumanMessagePromptTemplate,
 )
 from langchain.schema import SystemMessage
-from config import settings
-import os
 
-os.environ["OPENAI_API_KEY"] = settings.CHATGPT_KEY
-model = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0)
+model = ChatOpenAI(
+    model="gpt-3.5-turbo-0125",
+    temperature=0
+)
 prompt = ChatPromptTemplate.from_messages(
     [
         SystemMessage(
