@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import ReactMarkdown from 'react-markdown';
 import Modal from '../components/modal';
 
 export default function Home() {
@@ -14,15 +15,42 @@ export default function Home() {
   const [sessionId] = useState(uuidv4());
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (input.trim() === '') return;
 
-    const userMessage = { sender: username, text: input, id: Date.now() };
+    const messageId = Date.now();
+    const userMessage = { sender: username, text: input, id: messageId };
     setMessages([...messages, userMessage]);
 
-    // Mock bot response for now
-    const botMessage = { sender: 'bot', text: `You said: ${input}`, id: Date.now() + 1 };
-    setMessages([...messages, userMessage, botMessage]);
+    // Prepare request payload
+    const payload = {
+      name: username,
+      session_id: sessionId,
+      message_id: messageId.toString(),
+      message: input
+    };
+
+    try {
+      // Send the message to the API
+      const response = await fetch('http://0.0.0.0:8080/chat/message', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const botMessage = { sender: 'bot', text: data.data.answer, id: Date.now() + 1 };
+        setMessages(prevMessages => [...prevMessages, botMessage]);
+      } else {
+        console.error('Failed to get a response from the bot');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
 
     setInput('');
   };
@@ -68,7 +96,11 @@ export default function Home() {
           <div key={index} className={`mb-2 ${msg.sender === username ? 'text-right' : 'text-left'}`}>
             <div className={`inline-block p-2 rounded-md ${msg.sender === username ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
               <p className="text-xs text-black"><strong>ID:</strong> {msg.id}</p>
-              <p>{msg.text}</p>
+              {msg.sender === 'bot' ? (
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
+              ) : (
+                <p>{msg.text}</p>
+              )}
             </div>
             {msg.sender === 'bot' && (
               <div className="flex justify-start mt-1">

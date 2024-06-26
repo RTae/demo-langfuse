@@ -31,7 +31,7 @@ def chat(data: Chat):
         secret_key=settings.LANGFUSE_SK_KEY,
         host=settings.LANGFUSE_HOST,
         session_id=data.session_id,
-        user_id=data.email
+        user_id=data.name
     )
     answer = conversation(data.message, [langfuse_handler])
     langfuse_handler.flush()
