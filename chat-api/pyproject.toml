@@ -7,8 +7,20 @@ readme = "README.md"
 packages = []
 
 [tool.poetry.dependencies]
-python = "^3.11"
-
+python = ">=3.10,<3.12"
+fastapi = "^0.109.0"
+uvicorn = {extras = ["standard"], version = "^0.27.0.post1"}
+langchain = "^0.1.6"
+langchain-community = "^0.0.19"
+langchain-core = "^0.1.22"
+unstructured = "^0.12.4"
+shortuuid = "^1.0.11"
+pypdf = "^4.0.1"
+langchain-openai = "^0.0.6"
+pysqlite3-binary = { version = ">=0.5.2", platform = 'linux' }
+ecs-logging = "^2.1.0"
+langfuse = "^2.36.1"
+dynaconf = "^3.2.5"
 
 [build-system]
 requires = ["poetry-core"]
