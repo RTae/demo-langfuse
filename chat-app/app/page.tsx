@@ -1,11 +1,14 @@
 "use client"; // This is a client component 👈🏽
 
 import { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import Modal from '../components/modal';
 
 export default function Home() {
   const [messages, setMessages] = useState<{ sender: string; text: string; id: number }[]>([]);
   const [input, setInput] = useState('');
-  const [feedback, setFeedback] = useState<{ messageId: number; text: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ messageId?: number; text: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = () => {
@@ -32,7 +35,7 @@ export default function Home() {
   };
 
   const handleFeedbackChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
+    setFeedback({ ...feedback, text: event.target.value });
   };
 
   const handleFeedbackSubmit = () => {
@@ -42,6 +45,10 @@ export default function Home() {
     }
   };
 
+  const closeModal = () => {
+    setFeedback(null);
+  };
+
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -49,40 +56,28 @@ export default function Home() {
   }, [messages]);
 
   return (
-    <div className="p-5 max-w-lg mx-auto h-screen flex flex-col">
-      <h1 className="text-2xl font-bold mb-4">Chat Bot Demo</h1>
+    <div className="p-5 max-w-lg mx-auto h-screen flex flex-col bg-black">
+      <h1 className="text-2xl font-bold mb-4 text-white">Master Chief Bot</h1>
       <div className="flex-grow border border-gray-300 p-4 overflow-y-scroll mb-4">
         {messages.map((msg, index) => (
           <div key={index} className={`mb-2 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-            <p className={`inline-block p-2 rounded-md ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+            <div className={`inline-block p-2 rounded-md ${msg.sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
               {msg.text}
-              {msg.sender === 'bot' && (
+            </div>
+            {msg.sender === 'bot' && (
+              <div className="flex justify-start mt-1">
                 <button
                   onClick={() => handleDislike(msg.id)}
-                  className="ml-2 text-red-500 underline"
+                  className="text-red-500"
                 >
-                  Dislike
+                  <FontAwesomeIcon icon={faThumbsDown} />
                 </button>
-              )}
-            </p>
+              </div>
+            )}
           </div>
         ))}
         <div ref={messagesEndRef}></div>
       </div>
-      {feedback && (
-        <div className="mb-4">
-          <input
-            type="text"
-            value={feedback.text}
-            onChange={handleFeedbackChange}
-            placeholder="Provide your feedback here"
-            className="w-full border border-gray-300 p-2 rounded-md mb-2 text-black"
-          />
-          <button onClick={handleFeedbackSubmit} className="bg-blue-500 text-white p-2 rounded-md">
-            Submit Feedback
-          </button>
-        </div>
-      )}
       <div className="flex">
         <input
           type="text"
@@ -95,6 +90,24 @@ export default function Home() {
           Send
         </button>
       </div>
+
+      <Modal isOpen={!!feedback} onClose={closeModal}>
+        {feedback && (
+          <>
+            <h2 className="text-xl font-bold mb-2">Provide Feedback</h2>
+            <input
+              type="text"
+              value={feedback.text}
+              onChange={handleFeedbackChange}
+              placeholder="Provide your feedback here"
+              className="w-full border border-gray-300 p-2 rounded-md mb-2 text-black"
+            />
+            <button onClick={handleFeedbackSubmit} className="bg-blue-500 text-white p-2 rounded-md">
+              Submit Feedback
+            </button>
+          </>
+        )}
+      </Modal>
     </div>
   );
 };
