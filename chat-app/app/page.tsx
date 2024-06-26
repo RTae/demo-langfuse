@@ -5,12 +5,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import ReactMarkdown from 'react-markdown';
+import { LangfuseWeb } from "langfuse";
+
 import Modal from '../components/modal';
 
 export default function Home() {
-  const [messages, setMessages] = useState<{ sender: string; text: string; id: number }[]>([]);
+  const langfuseWeb = new LangfuseWeb({
+    publicKey: process.env.NEXT_PUBLIC_LANGFUSE_PUBLIC_KEY,
+    baseUrl: process.env.NEXT_PUBLIC_LANGFUSE_URL, // 🇪🇺 EU region
+  });
+
+  const [messages, setMessages] = useState<{ sender: string; text: string; id: number; traceId?: string }[]>([]);
   const [input, setInput] = useState('');
-  const [feedback, setFeedback] = useState<{ messageId?: number; text: string } | null>(null);
+  const [feedback, setFeedback] = useState<{ messageId?: number; text: string; traceId?: string } | null>(null);
   const [username] = useState('User' + Math.floor(Math.random() * 1000));
   const [sessionId] = useState(uuidv4());
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -43,7 +50,7 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
-        const botMessage = { sender: 'bot', text: data.data.answer, id: Date.now() + 1 };
+        const botMessage = { sender: 'bot', text: data.data.answer, id: Date.now() + 1, traceId: data.data.trace_id };
         setMessages(prevMessages => [...prevMessages, botMessage]);
       } else {
         console.error('Failed to get a response from the bot');
@@ -61,16 +68,22 @@ export default function Home() {
     }
   };
 
-  const handleDislike = (messageId: number) => {
-    setFeedback({ messageId, text: '' });
+  const handleDislike = (messageId: number, traceId?: string) => {
+    setFeedback({ messageId, text: '', traceId });
   };
 
   const handleFeedbackChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFeedback({ ...feedback, text: event.target.value });
   };
 
-  const handleFeedbackSubmit = () => {
+  const handleFeedbackSubmit = async () => {
     if (feedback && feedback.text.trim() !== '') {
+      await langfuseWeb.score({
+        traceId: feedback.traceId || '',
+        name: 'feedback',
+        value: 0,
+        comment: feedback.text
+      });
       console.log(`Feedback for message ${feedback.messageId} from ${username} (session ${sessionId}): ${feedback.text}`);
       setFeedback(null);
     }
@@ -96,6 +109,7 @@ export default function Home() {
           <div key={index} className={`mb-2 ${msg.sender === username ? 'text-right' : 'text-left'}`}>
             <div className={`inline-block p-2 rounded-md ${msg.sender === username ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
               <p className="text-xs text-black"><strong>ID:</strong> {msg.id}</p>
+              <p className="text-xs text-black"><strong>Trace ID:</strong> {msg.traceId}</p>
               {msg.sender === 'bot' ? (
                 <ReactMarkdown>{msg.text}</ReactMarkdown>
               ) : (
@@ -105,7 +119,7 @@ export default function Home() {
             {msg.sender === 'bot' && (
               <div className="flex justify-start mt-1">
                 <button
-                  onClick={() => handleDislike(msg.id)}
+                  onClick={() => handleDislike(msg.id, msg.traceId)}
                   className="text-red-500"
                 >
                   <FontAwesomeIcon icon={faThumbsDown} />
@@ -148,4 +162,4 @@ export default function Home() {
       </Modal>
     </div>
   );
-};
+}

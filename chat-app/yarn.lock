@@ -1920,6 +1920,20 @@ keyv@^4.5.3:
   dependencies:
     json-buffer "3.0.1"
 
+langfuse-core@^3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/langfuse-core/-/langfuse-core-3.12.2.tgz#04f9ee771c9fb6963ae25fc0c3ae2d760685d094"
+  integrity sha512-9YzaHKinivgn9u9sj6j3DlmAAc6GuPZgup2EdQ6ZDnycaQPtBEG7LZWt5X3hgMLO4EpGGoeogXiK+2+Ektuqlw==
+  dependencies:
+    mustache "^4.2.0"
+
+langfuse@^3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/langfuse/-/langfuse-3.12.2.tgz#0a6b1dcaa9903faba7fb6f79fa84668af1508eb2"
+  integrity sha512-PlRsat0cey80nSKGiw2vI7BR7aIBhv88ROhXwOOZvI8JNLLOyq0bMaz5/AOjVrAceRkPne3YNw9QF0vq1i7s5g==
+  dependencies:
+    langfuse-core "^3.12.2"
+
 language-subtag-registry@^0.3.20:
   version "0.3.23"
   resolved "https://registry.npmjs.org/language-subtag-registry/-/language-subtag-registry-0.3.23.tgz"
@@ -2336,6 +2350,11 @@ ms@^2.1.1:
   version "2.1.3"
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
+
+mustache@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/mustache/-/mustache-4.2.0.tgz#e5892324d60a12ec9c2a73359edca52972bf6f64"
+  integrity sha512-71ippSywq5Yb7/tVYyGbkBggbU8H3u5Rz56fH60jGFgr8uHwxs+aSKeqmluIVzM0m0kB7xQjKS6qPfd0b2ZoqQ==
 
 mz@^2.7.0:
   version "2.7.0"
