@@ -1,0 +1,5 @@
+default:
+  LANGFUSE_HOST: ''
+  LANGFUSE_PK_KEY: ''
+  LANGFUSE_SK_KEY: ''
+  CHATGPT_KEY: ''
