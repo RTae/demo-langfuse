@@ -12,11 +12,12 @@ import Modal from '../components/modal';
 export default function Home() {
   const langfuseWeb = new LangfuseWeb({
     publicKey: process.env.NEXT_PUBLIC_LANGFUSE_PUBLIC_KEY,
-    baseUrl: process.env.NEXT_PUBLIC_LANGFUSE_URL, // 🇪🇺 EU region
+    baseUrl: process.env.NEXT_PUBLIC_LANGFUSE_URL,
   });
 
   const [messages, setMessages] = useState<{ sender: string; text: string; id: number; traceId?: string }[]>([]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ messageId?: number; text: string; traceId?: string } | null>(null);
   const [username] = useState('User' + Math.floor(Math.random() * 1000));
   const [sessionId] = useState(uuidv4());
@@ -24,6 +25,8 @@ export default function Home() {
 
   const handleSendMessage = async () => {
     if (input.trim() === '') return;
+
+    setLoading(true);
 
     const messageId = Date.now();
     const userMessage = { sender: username, text: input, id: messageId };
@@ -39,7 +42,7 @@ export default function Home() {
 
     try {
       // Send the message to the API
-      const response = await fetch('http://0.0.0.0:8080/chat/message', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_CHAT}/chat/message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -60,6 +63,7 @@ export default function Home() {
     }
 
     setInput('');
+    setLoading(false);
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -101,7 +105,7 @@ export default function Home() {
 
   return (
     <div className="p-5 max-w-lg mx-auto h-screen flex flex-col bg-black text-white">
-      <h1 className="text-2xl font-bold mb-2">Master Chief Bot</h1>
+      <h1 className="text-2xl font-bold mb-2">Master Chef Bot</h1>
       <p className="mb-4"><strong>Username:</strong> {username}</p>
       <p className="mb-4"><strong>Session ID:</strong> {sessionId}</p>
       <div className="flex-grow border border-gray-300 p-4 overflow-y-scroll mb-4 bg-white text-black rounded">
@@ -135,11 +139,12 @@ export default function Home() {
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyPress}
           className="flex-grow border border-gray-300 p-2 rounded-md mr-2 text-black"
+          disabled={loading}
         />
-        <button onClick={handleSendMessage} className="bg-blue-500 text-white p-2 rounded-md">
-          Send
+        <button onClick={handleSendMessage} className="bg-blue-500 text-white p-2 rounded-md" disabled={loading}>
+          {loading ? 'Sending...' : 'Send'}
         </button>
       </div>
 

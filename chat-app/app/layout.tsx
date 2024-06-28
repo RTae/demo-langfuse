@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Master Chief Bot",
-  description: "Master Chief Bot",
+  title: "Master Chef Bot",
+  description: "Master Chef Bot",
 };
 
 export default function RootLayout({
